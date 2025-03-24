@@ -1,0 +1,16 @@
+**/.*
+*.iml
+src/
+docs/
+coverage/
+example/
+node_modules/
+typings/
+tests/
+types/tests/
+lib/
+rollup.config.js
+tsconfig.json
+jestconfig.json
+typedoc.json
+vite.config.ts

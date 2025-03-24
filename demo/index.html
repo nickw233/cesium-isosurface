@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.120/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.120/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="../dist//isosurface.main.js"></script>
+  <title>Cesium Isosurface</title>
+  <style>
+    #cesiumContainer {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+ 
+
+  </style>
+</head>
+ 
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    var viewer = new Cesium.Viewer('cesiumContainer',{
+    baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+      Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+      ),
+      {}
+    ),
+    });
+    Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+    'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    {}
+  )
+    .then(terrainProvider => {
+      viewer.terrainProvider = terrainProvider;
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+      const detectColor = (t) => {
+    t = t / 100;
+    const startColor = Cesium.Color.fromCssColorString('#0e6bf4');
+    const endColor = Cesium.Color.fromCssColorString('#fb5106');
+    return Cesium.Color.lerp(startColor, endColor, t, new Cesium.Color());
+  };
+
+  const genColors = (n) => {
+    const colors = [];
+    const step = 100 / n;
+    for (let i = 0; i <= n; i++) {
+      colors.push(detectColor(i * step));
+    }
+    return colors;
+  };
+  const aoi = [
+    {
+        "x": -998681.6898578501,
+        "y": 5588935.019799818,
+        "z": 2896640.106919751
+    },
+    {
+        "x": -998586.3381075171,
+        "y": 5594248.936262258,
+        "z": 2886465.727390874
+    },
+    {
+        "x": -1012827.2245570157,
+        "y": 5591413.529755917,
+        "z": 2886994.184443394
+    },
+    {
+        "x": -1010784.4078201713,
+        "y": 5586788.325505503,
+        "z": 2896583.6726234523
+    }
+].map(item => new Cesium.Cartesian3(item.x, item.y, item.z));
+
+const line = viewer.entities.add({
+    polyline: {
+      positions: [...aoi, aoi[0]],
+      width: 3,
+      clampToGround: true,
+      material: new Cesium.ColorMaterialProperty(Cesium.Color.RED),
+    }
+  })
+  viewer.zoomTo(line);
+  const terrainProv = await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+    'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    {}
+  );
+
+  const analyser = new isosurface.Isosurface(terrainProv, {
+    width: 1500,
+    colors: genColors(10),
+    breakCount: 10,
+  });
+    analyser.analyse(aoi, 50).then(e =>{
+      viewer.entities.add(e);
+      viewer.zoomTo(e);
+    });
+
+  </script>
+  </div>
+</body>
+ 
+</html>
