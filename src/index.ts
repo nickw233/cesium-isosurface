@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium';
+
 /**
  * @description 等高面配置
  * @export
@@ -37,10 +38,35 @@ export class Isosurface {
   private _maxHeight: number = 0;
   private hwr: number = 1;
 
+  /**
+   * @description 等高面断点
+   * @type {number[]}
+   * @memberof Isosurface
+   */
   breaks: number[] = [];
+  /**
+   * @description 等高面断点个数
+   * @type {number}
+   * @memberof Isosurface
+   */
   breakCount: number = 5;
+  /**
+   * @description 贴图宽度
+   * @type {number}
+   * @memberof Isosurface
+   */
   width: number = 1000;
+  /**
+   * @description 颜色表
+   * @type {Cesium.Color[]}
+   * @memberof Isosurface
+   */
   colors: Cesium.Color[] = [];
+  /**
+   * @description 等高面高度间隔
+   * @type {number}
+   * @memberof Isosurface
+   */
   interval: number = 50;
   constructor(terrainProvider: Cesium.TerrainProvider, options?: Partial<IsosurfaceOptions>) {
     this._terrainProvider = terrainProvider;
@@ -153,8 +179,8 @@ export class Isosurface {
   }
 
   /**
-   *
-   * @param positions 生成画布
+   * 生成canvas贴图
+   * @param positions 坐标点
    * @param cls 级别个数
    * @returns
    */
@@ -203,8 +229,8 @@ export class Isosurface {
 
   /**
    * 创建实体并设置材质
-   * @param positions 区域范围坐标
-   * @param pts 格网坐标
+   * @param areaPositions 区域范围坐标
+   * @param gridPositons 格网坐标
    * @returns
    */
   private createMaterial(areaPositions: Cesium.Cartesian3[], gridPositons: Cesium.Cartographic[]): Cesium.Entity {
