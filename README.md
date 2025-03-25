@@ -26,10 +26,13 @@ import {Viewer} from 'cesium'
 import {Isosurface} from 'ceium-isosurface'
 
 const viewer = new Cesium.Viewer('cesiumContainer')
+const genColor = () => Cesium.Color.fromRandom();
+
+// colors和breakCount必须一致
 const analyser = new Isosurface(viewer.terrainProvider, {
   width: 1500,
-  colors: genColors(10),
-  breakCount: 10,
+  colors: [genColor(), genColor(), genColor(), genColor()],
+  breakCount: 3,
 });
 
 const positionsCartesian3 = [...]

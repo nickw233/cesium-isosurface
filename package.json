@@ -1,6 +1,6 @@
 {
   "name": "ceium-isosurface",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "等值面分析",
   "type": "module",
   "main": "dist/isosurface.main.js",

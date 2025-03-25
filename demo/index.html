@@ -25,6 +25,8 @@
   <div id="cesiumContainer"></div>
   <script type="module">
     var viewer = new Cesium.Viewer('cesiumContainer',{
+      timeline: false, 
+      animation: false,
     baseLayer: Cesium.ImageryLayer.fromProviderAsync(
       Cesium.ArcGisMapServerImageryProvider.fromUrl(
         'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
@@ -44,11 +46,30 @@
     });
 
       const detectColor = (t) => {
-    t = t / 100;
-    const startColor = Cesium.Color.fromCssColorString('#0e6bf4');
-    const endColor = Cesium.Color.fromCssColorString('#fb5106');
-    return Cesium.Color.lerp(startColor, endColor, t, new Cesium.Color());
-  };
+        t = t / 100;
+        if (t <= 0.33) {
+          return Cesium.Color.lerp(
+            Cesium.Color.BLUE,
+            Cesium.Color.GREEN,
+            t * 3,
+            new Cesium.Color()
+          );
+        } else if (t <= 0.66) {
+          return Cesium.Color.lerp(
+            Cesium.Color.GREEN,
+            Cesium.Color.YELLOW,
+            (t - 0.33) * 3,
+            new Cesium.Color()
+          );
+        } else {
+          return Cesium.Color.lerp(
+            Cesium.Color.YELLOW,
+            Cesium.Color.RED,
+            (t - 0.66) * 3,
+            new Cesium.Color()
+          );
+        }
+      };
 
   const genColors = (n) => {
     const colors = [];
@@ -60,25 +81,30 @@
   };
   const aoi = [
     {
-        "x": -998681.6898578501,
-        "y": 5588935.019799818,
-        "z": 2896640.106919751
+        "x": -996447.9748075771,
+        "y": 5584769.450465669,
+        "z": 2905371.5559577574
     },
     {
-        "x": -998586.3381075171,
-        "y": 5594248.936262258,
-        "z": 2886465.727390874
+        "x": -993499.6797908848,
+        "y": 5598076.047438207,
+        "z": 2880833.5770425755
     },
     {
-        "x": -1012827.2245570157,
-        "y": 5591413.529755917,
-        "z": 2886994.184443394
+        "x": -1017324.8625967843,
+        "y": 5593581.388057266,
+        "z": 2881246.344064963
     },
     {
-        "x": -1010784.4078201713,
-        "y": 5586788.325505503,
-        "z": 2896583.6726234523
-    }
+        "x": -1016111.83612543,
+        "y": 5581620.616174531,
+        "z": 2904616.9866813654
+    },
+    {
+        "x": -996447.9748075771,
+        "y": 5584769.450465669,
+        "z": 2905371.5559577574
+    },
 ].map(item => new Cesium.Cartesian3(item.x, item.y, item.z));
 
 const line = viewer.entities.add({
@@ -103,7 +129,10 @@ const line = viewer.entities.add({
     analyser.analyse(aoi, 50).then(e =>{
       viewer.entities.add(e);
       viewer.zoomTo(e);
+      console.log(analyser.breaks)
     });
+
+
 
   </script>
   </div>
