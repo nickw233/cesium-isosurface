@@ -192,8 +192,8 @@ export class Isosurface {
     const canvas = document.createElement('canvas');
     canvas.height = h;
     canvas.width = w;
-    let maxH = 0;
-    let minH = 0;
+    let maxH = hs[0];
+    let minH = hs[0];
     hs.forEach(h => {
       maxH = Math.max(maxH, h);
       minH = Math.min(minH, h);
